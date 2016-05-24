@@ -26,3 +26,17 @@ generate:
     resources:
       - CVMFS
 
+dumphepmc: 
+  process:
+    process_type: 'string-interpolated-cmd'
+    cmd: 'source resources/env.sh && athena.py -c ''"''"''INPUT=["{inputevgen}"];OUTPUT="{outputhepmc}"''"''"'' McParticleAlgs/GenEventAsciiWriter_jobOptions.py'
+  publisher:
+    publisher_type: 'frompar-pub'
+    outputmap:
+      hepmcfile: outputhepmc
+  environment:
+    environment_type: 'docker-encapsulated'
+    image: lukasheinrich/generic_evgen
+    resources:
+      - CVMFS
+

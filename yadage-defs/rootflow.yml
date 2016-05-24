@@ -21,4 +21,11 @@ stages:
         seed: {stages: init, output: generate_seed, unwrap: true}        
         joboptions: {stages: prepare, output: joboptions, unwrap: true}
         ouputEVNT: '{workdir}/my.EVNT.pool.root'
-
+  - name: dumphepmc
+    dependencies: ['generate']
+    scheduler:
+      scheduler_type: singlestep-stage
+      step: {$ref: 'steps.yml#/dumphepmc'}
+      parameters:
+        inputevgen: {stages: generate, output: ouputEVNT, unwrap: true}
+        outputhepmc: '{workdir}/output.hepmc'
