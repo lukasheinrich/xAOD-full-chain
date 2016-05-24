@@ -1,4 +1,4 @@
-vprepare:
+prepare:
   process:
     process_type: 'string-interpolated-cmd'
     cmd: 'python jo_maker/make_jobo.py jo_maker/template.py {evgen_joboptions} {keywords} dummy_description example_evgen {proc_card} {contact}'
@@ -55,7 +55,7 @@ simulation:
       - CVMFS
       - GRIDProxy
 
-hits:
+digitization:
   process:
     process_type: 'string-interpolated-cmd'
     cmd: 'source resources/env.sh AtlasProduction,20.7.5.1,here && Reco_tf.py --inputHitsFile {hitsfile} --outputRDOFile {rdofile} --maxEvents {maxevts} --skipEvents 0 --conditionsTag {conditions} --geometryVersion {geometry}'
@@ -68,4 +68,37 @@ hits:
     image: lukasheinrich/athena_trfsbase
     resources:
       - CVMFS
+
+
+reconstruction:
+  process:
+    process_type: 'string-interpolated-cmd'
+    cmd: 'source resources/env_with_voms.sh AtlasProduction,20.7.5.1,here && Reco_tf.py --inputRDOFile {rdofile} --outputESDFile {esdfile} --outputAODFile {aodfile} --maxEvents {maxevts} --skipEvents 0 --conditionsTag {conditions} --geometryVersion {geometry} --postInclude default:RecJobTransforms/UseFrontier.py'
+  publisher:
+    publisher_type: 'frompar-pub'
+    outputmap:
+      esdfile: esdfile
+      aodfile: aodfile
+  environment:
+    environment_type: 'docker-encapsulated'
+    image: lukasheinrich/athena_trfsbase
+    resources:
+      - CVMFS
+      - GRIDProxy
+
+derivation:
+  process:
+    process_type: 'string-interpolated-cmd'
+    cmd: 'source resources/env_with_voms.sh AtlasDerivation,20.7.6.2,here && Reco_tf.py --AMI {ptag} --inputAODFile {aodfile} --outputDAODFile my.DAOD.pool.root && cp *my.DAOD.pool.root {daodfile}'
+  publisher:
+    publisher_type: 'frompar-pub'
+    outputmap:
+      daodfile: daodfile
+  environment:
+    environment_type: 'docker-encapsulated'
+    image: lukasheinrich/athena_trfsbase
+    resources:
+      - CVMFS
+      - GRIDProxy
+
 

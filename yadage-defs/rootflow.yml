@@ -29,3 +29,50 @@ stages:
       parameters:
         inputevgen: {stages: generate, output: ouputEVNT, unwrap: true}
         outputhepmc: '{workdir}/output.hepmc'
+
+  - name: simulation
+    dependencies: ['generate']
+    scheduler:
+      scheduler_type: singlestep-stage
+      step: {$ref: 'steps.yml#/simulation'}
+      parameters:
+        evgenfile: {stages: generate, output: ouputEVNT, unwrap: true}
+        hitsfile: '{workdir}/my.HITS.pool.root'
+        AMItag: a766
+        maxevts: 2
+        simseed: {stages: init, output: simulation_seed, unwrap: true}
+
+  - name: digitization
+    dependencies: ['simulation']
+    scheduler:
+      scheduler_type: singlestep-stage
+      step: {$ref: 'steps.yml#/digitization'}
+      parameters:
+        hitsfile: {stages: simulation, output: hitsfile, unwrap: true}
+        rdofile: '{workdir}/my.RDO.pool.root'
+        maxevts: -1
+        conditions: 'default:OFLCOND-RUN12-SDR-19'
+        geometry: 'default:ATLAS-R2-2015-03-01-00_VALIDATION'
+
+  - name: reconstruction
+    dependencies: ['digitization']
+    scheduler:
+      scheduler_type: singlestep-stage
+      step: {$ref: 'steps.yml#/reconstruction'}
+      parameters:
+        rdofile: {stages: digitization, output: rdofile, unwrap: true}
+        esdfile: '{workdir}/my.ESD.pool.root'
+        aodfile: '{workdir}/my.AOD.pool.root'
+        maxevts: -1
+        conditions: default:OFLCOND-MC15c-SDR-09
+        geometry: default:ATLAS-R2-2015-03-01-00
+
+  - name: derivation
+    dependencies: ['reconstruction']
+    scheduler:
+      scheduler_type: singlestep-stage
+      step: {$ref: 'steps.yml#/derivation'}
+      parameters:
+        aodfile: {stages: reconstruction, output: aodfile, unwrap: true}
+        daodfile: '{workdir}/my.DAOD.pool.root'
+        ptag: p2656
