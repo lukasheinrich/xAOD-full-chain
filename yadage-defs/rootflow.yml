@@ -11,6 +11,7 @@ stages:
         nevents: {stages: init, output: nevents, unwrap: true}
         DSID: {stages: init, output: DSID, unwrap: true}
         generate_seed: {stages: init, output: generate_seed, unwrap: true}
+
   - name: dumphepmc
     dependencies: ['madgraph_gen']
     scheduler:
@@ -20,14 +21,23 @@ stages:
         inputevgen: {stages: 'madgraph_gen.[*].generate', output: ouputEVNT, unwrap: true}
         outputhepmc: '{workdir}/output.hepmc'
 
-  - name: phenoflow
-    dependencies: ['dumphepmc']
+  - name: xaod_truthana
+    dependencies: ['madgraph_gen']
     scheduler:
       scheduler_type: singlestep-stage
-      workflow: {$ref: 'phenoflow.yml'}
+      workflow: {$ref: 'analysis/analysisflow.yml'}
       parameters:
-        hepmcfile: {stages: 'dumphepmc', output: hepmcfile, unwrap: true}
-        rivet_analysis: MC_GENERIC
+        evgenfile: {stages: 'madgraph_gen.[*].generate', output: ouputEVNT, unwrap: true}
+
+
+#  - name: phenoflow
+#    dependencies: ['dumphepmc']
+#    scheduler:
+#      scheduler_type: singlestep-stage
+#      workflow: {$ref: 'phenoflow.yml'}
+#      parameters:
+#        hepmcfile: {stages: 'dumphepmc', output: hepmcfile, unwrap: true}
+#        rivet_analysis: MC_GENERIC
 
   - name: sim_reco
     dependencies: ['madgraph_gen']
@@ -36,8 +46,9 @@ stages:
       workflow: {$ref: 'sim_reco_flow.yml'}
       parameters:
         evgen: {stages: 'madgraph_gen.[*].generate', output: ouputEVNT, unwrap: true}
-        nevents: 2
+        nevents: -1
         simulation_seed: {stages: init, output: simulation_seed, unwrap: true}
+
   - name: derivation
     dependencies: ['sim_reco']
     scheduler:
