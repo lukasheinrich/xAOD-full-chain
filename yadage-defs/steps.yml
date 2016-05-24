@@ -1,4 +1,4 @@
-prepare:
+vprepare:
   process:
     process_type: 'string-interpolated-cmd'
     cmd: 'python jo_maker/make_jobo.py jo_maker/template.py {evgen_joboptions} {keywords} dummy_description example_evgen {proc_card} {contact}'
@@ -37,6 +37,35 @@ dumphepmc:
   environment:
     environment_type: 'docker-encapsulated'
     image: lukasheinrich/generic_evgen
+    resources:
+      - CVMFS
+
+simulation:
+  process:
+    process_type: 'string-interpolated-cmd'
+    cmd: 'source resources/env_with_voms.sh AtlasProduction,20.7.5.1,here && Sim_tf.py --AMIConfig {AMItag} --inputEvgenFile {evgenfile} --outputHitsFile {hitsfile} --maxEvents {maxevts} --skipEvents 0 --randomSeed {simseed}'
+  publisher:
+    publisher_type: 'frompar-pub'
+    outputmap:
+      hitsfile: hitsfile
+  environment:
+    environment_type: 'docker-encapsulated'
+    image: lukasheinrich/athena_trfsbase
+    resources:
+      - CVMFS
+      - GRIDProxy
+
+hits:
+  process:
+    process_type: 'string-interpolated-cmd'
+    cmd: 'source resources/env.sh AtlasProduction,20.7.5.1,here && Reco_tf.py --inputHitsFile {hitsfile} --outputRDOFile {rdofile} --maxEvents {maxevts} --skipEvents 0 --conditionsTag {conditions} --geometryVersion {geometry}'
+  publisher:
+    publisher_type: 'frompar-pub'
+    outputmap:
+      rdofile: rdofile
+  environment:
+    environment_type: 'docker-encapsulated'
+    image: lukasheinrich/athena_trfsbase
     resources:
       - CVMFS
 
