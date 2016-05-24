@@ -19,6 +19,16 @@ stages:
       parameters:
         inputevgen: {stages: 'madgraph_gen.[*].generate', output: ouputEVNT, unwrap: true}
         outputhepmc: '{workdir}/output.hepmc'
+
+  - name: phenoflow
+    dependencies: ['dumphepmc']
+    scheduler:
+      scheduler_type: singlestep-stage
+      workflow: {$ref: 'phenoflow.yml'}
+      parameters:
+        hepmcfile: {stages: 'dumphepmc', output: hepmcfile, unwrap: true}
+        rivet_analysis: MC_GENERIC
+
   - name: sim_reco
     dependencies: ['madgraph_gen']
     scheduler:
