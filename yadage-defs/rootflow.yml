@@ -1,0 +1,24 @@
+stages:
+  - name: prepare
+    dependencies: ['init']
+    scheduler:
+      scheduler_type: singlestep-stage
+      step: {$ref: 'steps.yml#/prepare'}
+      parameters:
+        proc_card: '/code/tests/proc_card.dat'
+        evgen_joboptions: '{workdir}/jo.py'
+        keywords: 'exotic,BSMHiggs'
+        contact: lukas.heinrich@cern.ch
+  - name: generate
+    dependencies: ['prepare']
+    scheduler:
+      scheduler_type: singlestep-stage
+      step: {$ref: 'steps.yml#/generate'}
+      parameters:
+        ecmEnergy: 13000
+        nevents: {stages: init, output: nevents, unwrap: true}
+        DSID: {stages: init, output: DSID, unwrap: true}
+        seed: {stages: init, output: generate_seed, unwrap: true}        
+        joboptions: {stages: prepare, output: joboptions, unwrap: true}
+        ouputEVNT: '{workdir}/my.EVNT.pool.root'
+
