@@ -9,6 +9,8 @@ stages:
         DSID: {stages: init, output: DSID, flatten: true}
         generate_seed: {stages: init, output: generation_seeds, flatten: true}
         simulation_seed: {stages: init, output: simulation_seed, flatten: true}
+        proc_card: {stages: init, output: proc_card, flatten: true}
+        param_card: {stages: init, output: param_card, flatten: true}
       scatter:
         method: zip
         parameters: ['generate_seed']
