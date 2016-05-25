@@ -6,6 +6,7 @@ stages:
       workflow: {$ref: 'signalGeneration/madgraph_genflow.yml'}
       parameters:
         proc_card: '/code/tests/proc_card.dat'
+        proc_card: '/code/tests/param_card.dat'
         keywords: 'exotic,BSMHiggs'
         contact: lukas.heinrich@cern.ch
         nevents: {stages: init, output: nevents, unwrap: true}

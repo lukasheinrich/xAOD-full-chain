@@ -1,7 +1,7 @@
 prepare:
   process:
     process_type: 'string-interpolated-cmd'
-    cmd: 'python jo_maker/make_jobo.py jo_maker/template.py {evgen_joboptions} {keywords} dummy_description example_evgen {proc_card} {contact}'
+    cmd: 'python jo_maker/make_jobo.py jo_maker/template.py {evgen_joboptions} {keywords} dummy_description example_evgen {proc_card} {param_card} {contact}'
   publisher:
     publisher_type: 'frompar-pub'
     outputmap:

@@ -9,6 +9,7 @@ parser.add_argument('keywords')
 parser.add_argument('description')
 parser.add_argument('proc_name')
 parser.add_argument('proc_card')
+parser.add_argument('param_card')
 parser.add_argument('contact')
 
 args = parser.parse_args()
@@ -30,6 +31,7 @@ def main():
 		CONTACT=args.contact,
 		PROCESS_NAME=args.proc_name,
 		PROC_CARD=open(args.proc_card).read(),
+                PARAM_FILE=args.param_card,
 		POST_INCLUDE=post_include)
             )
         

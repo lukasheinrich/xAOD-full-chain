@@ -26,6 +26,8 @@ save_proc_dir = True #change to true to delete process dir after generating ... 
 
 proc_card = """{PROC_CARD}"""
 
+param_card = '{PARAM_FILE}'
+
 proc_name = evgenConfig.process #just used for the mg directory name
 
 #modifications to the param_card.dat (generated from the proc_card i.e. the specific model)
