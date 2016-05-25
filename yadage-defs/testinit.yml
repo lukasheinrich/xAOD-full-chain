@@ -1,4 +1,4 @@
-nevents: 25
+nevents: 100
 DSID: 123456
 generate_seed: 1234
 simulation_seed: 9876

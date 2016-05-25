@@ -1,0 +1,4 @@
+events_per_branch: 100
+DSID: 123456
+generation_seeds: [1234,5678,9098,7654]
+simulation_seed: 9876
