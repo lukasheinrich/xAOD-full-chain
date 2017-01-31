@@ -1,6 +1,6 @@
 analysis_env: &analysis_env
   environment_type: docker-encapsulated
-  image: lukasheinrich/cvmfs_postderiv_test
+  image: lukasheinrich/gitlab-codecapture-demo
   resources:
     - CVMFS
 
