@@ -1,7 +1,9 @@
 analysis_env: &analysis_env
   environment_type: docker-encapsulated
   image: lukasheinrich/cvmfs_postderiv_test
-  
+  resources:
+    - CVMFS
+
 extract:
   process:
     process_type: interpolated-script-cmd
