@@ -16,4 +16,9 @@ stages:
         method: zip
   - name: merge
     dependencies: [parallel]
-    
+    scheduler:
+      scheduler_type: singlestep-stage
+      parameters:
+        mergedfile: '{workdir}/merged.root'
+        rootfiles: {stages: 'parallel.[*].derivation', output: daodfile}
+      step: {$ref: 'rootsteps.yml#/root_merge'}
