@@ -1,0 +1,31 @@
+stages:
+  - name: lhe_gen
+    dependencies: ['init']
+    scheduler:
+      scheduler_type: singlestep-stage
+      workflow: {$ref: 'signalGeneration/fromlhe_flow.yml'}
+      parameters:
+        lhefile: {stages: init, output: lhefile, unwrap: true}
+        ecmEnergy: {stages: init, output: ecmEnergy, unwrap: true}
+        nevents: {stages: init, output: nevents, unwrap: true}
+        DSID: {stages: init, output: DSID, unwrap: true}
+        generate_seed: {stages: init, output: generate_seed, unwrap: true}
+  - name: sim_reco
+    dependencies: ['lhe_gen']
+    scheduler:
+      scheduler_type: singlestep-stage
+      workflow: {$ref: 'ATLAS_sim_reco/sim_reco_flow.yml'}
+      parameters:
+        evgen: {stages: 'lhe_gen.[*].LHEtoEVNT', output: ouputEVNT, unwrap: true}
+        nevents: -1
+        simulation_seed: {stages: init, output: simulation_seed, unwrap: true}
+
+  - name: derivation
+    dependencies: ['sim_reco']
+    scheduler:
+      scheduler_type: singlestep-stage
+      step: {$ref: 'reductionFramework/derivationsteps.yml#/aod_daod_derivation'}
+      parameters:
+        aodfile: {stages: 'sim_reco.[*].reconstruction', output: aodfile, unwrap: true}
+        daodfile: '{workdir}/my.DAOD.pool.root'
+        ptag: p2656
